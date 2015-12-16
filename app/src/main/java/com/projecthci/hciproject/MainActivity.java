@@ -4,6 +4,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -14,6 +17,46 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
     }
 
+    public void mainMenuGraphsButtonClick(View view)
+    {
+        setContentView(R.layout.graph_menu);
+    }
+
+    public void mainMenuFriendsButtonClick(View view)
+    {
+        setContentView(R.layout.friends_menu);
+    }
+
+    public void mainMenuWorkoutsButtonClick(View view)
+    {
+        setContentView(R.layout.workout_menu);
+    }
+
+    public void startWorkoutButtonClick(View view)
+    {
+        setContentView(R.layout.start_workout);
+    }
+
+    public void workoutResultDoneButtonClick(View view)
+    {
+        setContentView(R.layout.activity_main);
+    }
+
+    public void stopWorkoutButtonClick(View view)
+    {
+        setContentView(R.layout.workout_result);
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.oneToTen, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        Spinner spinner2 = (Spinner) findViewById(R.id.spinnerRepititions);
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
+                R.array.oneToTen, android.R.layout.simple_spinner_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner2.setAdapter(adapter);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

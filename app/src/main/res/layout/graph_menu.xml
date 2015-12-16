@@ -11,38 +11,36 @@
         android:layout_height="wrap_content"
         android:id="@+id/imageButton"
         android:src="@drawable/graphs"
-        android:onClick="mainMenuGraphsButtonClick"
         android:alpha="1"
         android:background="@android:color/transparent"
+        android:onClick="mainMenuGraphsButtonClick"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="48dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginBottom="44dp" />
+        android:layout_alignRight="@+id/imageView"
+        android:adjustViewBounds="true"
+        android:layout_alignEnd="@+id/imageView" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton2"
-        android:src="@drawable/friends"
-        android:background="@android:color/transparent"
+        android:src="@drawable/friendssmall"
         android:onClick="mainMenuFriendsButtonClick"
-        android:layout_alignTop="@+id/imageButton"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="43dp"
-        android:layout_marginStart="43dp" />
+        android:layout_alignParentStart="true" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageButton3"
-        android:src="@drawable/workouts"
+        android:src="@drawable/workoutssmall"
         android:onClick="mainMenuWorkoutsButtonClick"
         android:background="@android:color/transparent"
-        android:layout_above="@+id/imageButton2"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/textView"
+        android:layout_alignStart="@+id/textView" />
 
     <TextView
         android:layout_width="wrap_content"
