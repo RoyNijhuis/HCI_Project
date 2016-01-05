@@ -1,27 +1,140 @@
 package com.projecthci.hciproject;
 
 import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private Schedule testSchedule;
+    private int testStage = 0; // 0=reminder, 1=graph
+    private Calendar lastNotification;
+    private ArrayList<Integer> scores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        lastNotification = null;
+        scores = new ArrayList<>();
+        scores.add(0);
+
+        //LOAD SCORES FROM FILE
+        try {
+            scores = readScoresFromFile();
+            Log.d("I/O message", "File CAN be read");
+        } catch (Exception e) {
+            Log.d("I/O message", "File cannot be read");
+        }
+
+        //Initialize the schedule
+        testSchedule = new Schedule();
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,5,16,0,0), new Workout("Push-ups", 10));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,6,16,0,0), new Workout("Push-ups", 20));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,7,16,0,0), new Workout("Push-ups", 30));
+
+        //Start background thread
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
+
+                    Calendar currentDate = new GregorianCalendar(timeZone);
+                    Date currentTime = new Date();
+                    currentDate.setTime(currentTime);
+                    for (Map.Entry e : testSchedule.getScheduledWorkouts().entrySet()) {
+                        if (datesAreEqual((Calendar) e.getKey(), currentDate) && timeGreaterThan(currentDate, (Calendar) e.getKey())) {
+                            //You should do a workout, send reminder, or do something else
+                            if (testStage == 0) {
+                                boolean datesEqual = false;
+                                if (lastNotification != null) {
+                                    if (datesAreEqual(lastNotification, currentDate)) {
+                                        datesEqual = true;
+                                    }
+                                }
+                                if (!datesEqual) {
+                                    sendReminder();
+                                    lastNotification = currentDate;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public ArrayList<Integer> readScoresFromFile() throws Exception
+    {
+        FileInputStream fis;
+        ArrayList<Integer> returnlist= null;
+        fis = openFileInput("scores");
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        returnlist = (ArrayList<Integer>) ois.readObject();
+        ois.close();
+
+        return returnlist;
+    }
+
+    public void writeScoresFromFile(ArrayList<Integer> scores)
+    {
+        FileOutputStream fis;
+        ArrayList<Integer> returnlist= null;
+        try {
+            fis = openFileOutput("scores", Context.MODE_PRIVATE);
+            ObjectOutputStream ois = new ObjectOutputStream(fis);
+            ois.writeObject(scores);
+            ois.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendReminder()
+    {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.workouts)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setSmallIcon(R.drawable.graph)
+                        .setContentTitle("Get ready to exercise!")
+                        .setContentText("Are you going to do your workout? \n'Yes, of course!'");
         int mNotificationId = 001;
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr =
@@ -33,6 +146,25 @@ public class MainActivity extends ActionBarActivity {
     public void mainMenuGraphsButtonClick(View view)
     {
         setContentView(R.layout.graph_menu);
+        LineChart chart = (LineChart) findViewById(R.id.chart);
+        ArrayList<Entry> entries = new ArrayList<>();
+        for(int i=0; i<scores.size(); i++)
+        {
+            entries.add(new Entry(scores.get(i), i));
+        }
+        LineDataSet dataSet = new LineDataSet(entries, "Progress");
+        dataSet.setDrawCubic(true);
+        dataSet.setColor(Color.GREEN);
+        ArrayList<String> xNames = new ArrayList<>();
+        for(int i=0; i<scores.size(); i++)
+        {
+            xNames.add("Day " + (i+1));
+        }
+        LineData data = new LineData(xNames, dataSet);
+        chart.setData(data);
+        chart.setDescription("");
+        chart.setExtraTopOffset(10);
+        chart.invalidate();
     }
 
     public void mainMenuFriendsButtonClick(View view)
@@ -48,10 +180,44 @@ public class MainActivity extends ActionBarActivity {
     public void startWorkoutButtonClick(View view)
     {
         setContentView(R.layout.start_workout);
+
+        TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
+
+        Calendar currentDate = new GregorianCalendar(timeZone);
+        Date currentTime = new Date();
+        currentDate.setTime(currentTime);
+
+        int hours = (currentDate.getTime().getHours()+1<24?currentDate.getTime().getHours()+1:0);
+        int minutes = currentDate.getTime().getMinutes();
+
+        Workout todo = null;
+
+        for(Map.Entry e : testSchedule.getScheduledWorkouts().entrySet())
+        {
+            if(datesAreEqual((Calendar)e.getKey(), currentDate))
+            {
+                todo = (Workout) e.getValue();
+                break;
+            }
+        }
+
+        TextView t = (TextView)findViewById(R.id.workoutDesc);
+        t.setText(todo.getRepititions() + "x " + todo.getName());
+    }
+
+    public boolean datesAreEqual(Calendar one, Calendar two) {
+        return (one.get(Calendar.YEAR) == two.get(Calendar.YEAR) && one.get(Calendar.DAY_OF_MONTH) == two.get(Calendar.DAY_OF_MONTH) && one.get(Calendar.MONTH) == two.get(Calendar.MONTH));
+    }
+
+    public boolean timeGreaterThan(Calendar toTest, Calendar cal)
+    {
+        return (toTest.get(Calendar.HOUR_OF_DAY) >= cal.get(Calendar.HOUR_OF_DAY));
     }
 
     public void workoutResultDoneButtonClick(View view)
     {
+        scores.add(scores.get(scores.size()-1) + 10);
+        writeScoresFromFile(scores);
         setContentView(R.layout.activity_main);
     }
 

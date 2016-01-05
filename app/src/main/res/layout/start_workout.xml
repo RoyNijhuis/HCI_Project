@@ -24,7 +24,18 @@
         android:text="I am done!"
         android:onClick="stopWorkoutButtonClick"
         android:id="@+id/button3"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="82dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Default text"
+        android:id="@+id/workoutDesc"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="43dp" />
 
 </RelativeLayout>
