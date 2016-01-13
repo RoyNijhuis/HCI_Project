@@ -224,7 +224,20 @@ public class MainActivity extends ActionBarActivity {
 
     public void scheduleButtonClick(View view)
     {
+        String scheduleString = "";
+        for(Map.Entry e : testSchedule.getScheduledWorkouts().entrySet())
+        {
+            Calendar date = ((Calendar)e.getKey());
+            Workout workout = ((Workout)e.getValue());
+            String temp = "";
+            temp+=date.get(Calendar.DAY_OF_MONTH)+"-"+(date.get(Calendar.MONTH)+1) + "-" + date.get(Calendar.YEAR) + "\n";
+            temp+=workout.getRepititions() + "x " + workout.getName() + "\n\n";
+
+            scheduleString = temp + scheduleString;
+        }
         setContentView(R.layout.schedule);
+        TextView scheduleTextView = (TextView) findViewById(R.id.workoutScheduleTextView);
+        scheduleTextView.setText(scheduleString);
     }
 
     public void stopWorkoutButtonClick(View view)
