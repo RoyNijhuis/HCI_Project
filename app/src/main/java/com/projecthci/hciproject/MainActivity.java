@@ -60,9 +60,9 @@ public class MainActivity extends ActionBarActivity {
 
         //Initialize the schedule
         testSchedule = new Schedule();
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,5,16,0,0), new Workout("Push-ups", 10));
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,6,16,0,0), new Workout("Push-ups", 20));
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,7,16,0,0), new Workout("Push-ups", 30));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,13,16,0,0), new Workout("Push-ups", 10));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,14,16,0,0), new Workout("Push-ups", 20));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,15,16,0,0), new Workout("Push-ups", 30));
 
         //Start background thread
         AsyncTask.execute(new Runnable() {
@@ -147,6 +147,7 @@ public class MainActivity extends ActionBarActivity {
     {
         setContentView(R.layout.graph_menu);
         LineChart chart = (LineChart) findViewById(R.id.chart);
+        chart.setScaleEnabled(false);
         ArrayList<Entry> entries = new ArrayList<>();
         for(int i=0; i<scores.size(); i++)
         {
@@ -219,6 +220,11 @@ public class MainActivity extends ActionBarActivity {
         scores.add(scores.get(scores.size()-1) + 10);
         writeScoresFromFile(scores);
         setContentView(R.layout.activity_main);
+    }
+
+    public void scheduleButtonClick(View view)
+    {
+        setContentView(R.layout.schedule);
     }
 
     public void stopWorkoutButtonClick(View view)
