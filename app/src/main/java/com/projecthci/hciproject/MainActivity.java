@@ -60,9 +60,9 @@ public class MainActivity extends ActionBarActivity {
 
         //Initialize the schedule
         testSchedule = new Schedule();
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,13,16,0,0), new Workout("Push-ups", 10));
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,14,16,0,0), new Workout("Push-ups", 20));
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,15,16,0,0), new Workout("Push-ups", 30));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,21,15,10,0), new Workout("Push-ups", 10));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,22,16,0,0), new Workout("Push-ups", 20));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,23,16,0,0), new Workout("Push-ups", 30));
 
         //Start background thread
         AsyncTask.execute(new Runnable() {
