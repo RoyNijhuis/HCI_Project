@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -217,7 +218,28 @@ public class MainActivity extends ActionBarActivity {
 
     public void workoutResultDoneButtonClick(View view)
     {
-        scores.add(scores.get(scores.size()-1) + 10);
+        NumberPicker np = (NumberPicker)findViewById(R.id.numberPicker);
+        int repititions = np.getValue();
+        Workout todo = null;
+        TimeZone timeZone = TimeZone.getTimeZone("Europe/Amsterdam");
+
+        Calendar currentDate = new GregorianCalendar(timeZone);
+        Date currentTime = new Date();
+        currentDate.setTime(currentTime);
+
+        for(Map.Entry e : testSchedule.getScheduledWorkouts().entrySet())
+        {
+            if(datesAreEqual((Calendar)e.getKey(), currentDate))
+            {
+                todo = (Workout) e.getValue();
+                break;
+            }
+        }
+
+        TextView t = (TextView)findViewById(R.id.workoutDesc);
+
+        int scoreEarned = 10-(Math.abs(todo.getRepititions() - repititions));
+        scores.add(scores.get(scores.size()-1) + scoreEarned);
         writeScoresFromFile(scores);
         setContentView(R.layout.activity_main);
     }
@@ -249,11 +271,9 @@ public class MainActivity extends ActionBarActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        Spinner spinner2 = (Spinner) findViewById(R.id.spinnerRepititions);
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
-                R.array.oneToTen, android.R.layout.simple_spinner_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner2.setAdapter(adapter);
+        NumberPicker np = (NumberPicker)findViewById(R.id.numberPicker);
+        np.setMinValue(1);
+        np.setMaxValue(50);
     }
 
     @Override
