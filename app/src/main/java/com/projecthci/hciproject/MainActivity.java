@@ -61,9 +61,9 @@ public class MainActivity extends ActionBarActivity {
 
         //Initialize the schedule
         testSchedule = new Schedule();
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,21,15,10,0), new Workout("Push-ups", 10));
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,22,16,0,0), new Workout("Push-ups", 20));
-        testSchedule.addWorkout(new GregorianCalendar(2016,0,23,16,0,0), new Workout("Push-ups", 30));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,27,15,10,0), new Workout("Push-ups", 10));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,28,16,0,0), new Workout("Push-ups", 20));
+        testSchedule.addWorkout(new GregorianCalendar(2016,0,29,16,0,0), new Workout("Push-ups", 30));
 
         //Start background thread
         AsyncTask.execute(new Runnable() {
@@ -127,6 +127,11 @@ public class MainActivity extends ActionBarActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void gotoWorkoutMenu(View view)
+    {
+        setContentView(R.layout.workout_menu);
     }
 
     public void sendReminder()
